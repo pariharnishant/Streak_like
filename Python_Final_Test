@@ -1,9 +1,7 @@
 import json
 
-
-
-
 class trade:
+
           transaction=[]
           investment=[]
           sell=[]
@@ -12,14 +10,251 @@ class trade:
           pos=0
           neg=0
           profit=0
-     def summary():
-          {
             
+          def summary():
+                     
             print "Total Profit: ",profit
             print "Successful trades: ",pos
             print "Unsuccessful trades: ",neg
             print "Success ratio: ",(float)(pos/(pos+neg))
-          }
+            return
           
          
-         
+class query:
+
+  
+      def __init__():
+      
+          first_parameter = 0;
+          condition = 0;
+          second_parameter = 0;
+          
+# the getDouble function has been skipped
+
+
+def assign (a):
+
+  if a == 1:
+    return "open"
+  elif a==2 :
+    return "close"
+  elif (a==3):
+    return "high"
+  elif (a==4):
+    return "low"
+  elif (a==5):
+    return "1"
+  else :
+    return "2"
+
+      
+# 1.greater than
+# 2.less than
+# 3.cross above
+# 4.cross below
+# 5.equal to
+
+def condition (cond, price , prev_price, ind_point , prev_ind_point): 
+
+  if cond == 1 :
+    if price > ind_point:
+      return 1
+    else:
+      return 0
+    
+  elif cond == 2:
+    if price < ind_point:
+      return 1
+    else:
+      return 0
+  
+  elif cond == 3:
+    if price > ind_point and prev_price < prev_ind_point:
+      return 1
+    else:
+      return 0
+  
+  elif cond == 4:
+    if price < ind_point and prev_price > prev_ind_point:
+      return 1
+    else:
+      return 0
+  
+  elif cond == 5:
+    if price == ind_point:
+      return 1
+    else:
+      return 0
+   
+def backtest(user_entry_cond ,user_exit_cond ,Json_datapoints ,qty = 1):
+
+  flag_entry_cond = 0
+  j = 0
+  i = 1
+  
+  while i < Json_datapoints[0].size():
+
+   flag_entry_cond = 0;  
+   
+   for j in user_entry_cond.size():
+     #first_para = GetDouble(Json_datapoints[user_entry_cond[j].first_parameter-1][i]);
+     #prev_first_para = GetDouble(Json_datapoints[user_entry_cond[j].first_parameter-1][i-1]);
+     #second_para = GetDouble(Json_datapoints[user_entry_cond[j].second_parameter-1][i]);
+     #prev_second_para = GetDouble(Json_datapoints[user_entry_cond[j].second_parameter-1][i-1]);
+     
+      if not condition(user_entry_cond[j].condition , first_para , prev_first_para , second_para , prev_second_para):
+        flag_entry_cond = 1
+        break
+     
+   
+   
+   if flag_entry_cond == 0:
+     print Json_datapoints[1][i],"\t",Json_datapoints.back()[i].toString().c_str(),"\t",i,"\t",j
+   
+   i+=1
+  print "problem"
+  
+def main ():
+  with open('3.json', 'r') as f:
+  JSON_dict = json.load(f)
+  data=JSON_dict['data']
+  pltPnts=data['pltPnts']
+  open_data=pltPnts['open']
+  close_data=pltPnts['open']
+  high_data=pltPnts['high']
+  low_data=pltPnts['low']
+  ltt_data=pltPnts['ltt']
+  vol_data=pltPnts['vol']
+  sma_data14=data["tiOut"][0]["rsltSet"][0]["vals"]
+  sma_data100=data["tiOut"][1]["rsltSet"][0]["vals"]
+  
+    
+  
+
+  
+  vector<query> user_entry_cond, user_exit_cond;
+  query temp1;
+  
+  int flag = 0;
+  
+  cout<<"Enter entry condition: \n\n\n";
+  
+  do
+  {
+    user_entry_cond.push_back(temp1);
+    cout<<"Enter first parameter: \n";
+    cout<<"1.open\t2.close\t3.high\t4.low\t5.SMA 14\t6.SMA 100\n";
+    cin>>user_entry_cond.back().first_parameter;
+    cout<<"Enter condition: ";
+    cout<<"1.greater than\n2.less than\n3.cross above\n4.cross below\n5.equal to\n";
+    cin>>user_entry_cond.back().condition;
+    cout<<"Enter second parameter: \n";
+    cout<<"1.open\t2.close\t3.high\t4.low\t5.SMA 14\t6.SMA 100\n";
+    cin>>user_entry_cond.back().second_parameter;
+    cout<<"do you want to give more entry condition:\n1.Yes\n2.no\n";
+    cin>>flag;  
+  }while(flag == 1);
+  
+  cout<<"Enter exit condition: \n\n\n";
+  
+  do
+  {
+    user_exit_cond.push_back(temp1);
+    cout<<"Enter first parameter: \n";
+    cout<<"1.open\n2.close\n3.high\n4.low\n5.SMA 14\n6.SMA 100\n";
+    cin>>user_exit_cond.back().first_parameter;
+    cout<<"Enter condition: \n";
+    cout<<"1.greater than\n2.less than\n3.cross above\n4.cross below\n5.equal to\n";
+    cin>>user_exit_cond.back().condition;
+    cout<<"Enter second parameter: \n";
+    cout<<"1.open\n2.close\n3.high\n4.low\n5.SMA 14\n6.SMA 100\n";
+    cin>>user_exit_cond.back().second_parameter;
+    cout<<"do you want to give more exit condition:\n1.Yes\n2.no\n";
+    cin>>flag;
+    
+  }while(flag == 1);
+  
+  
+  
+  
+  
+  
+  
+  
+   
+  int first_para , prev_first_para , second_para ,prev_second_para;
+  int flag_entry_cond = 0 , qty =1 , flag_exit_cond = 0 , buy_flag = 0 , profit = 0;
+  ofstream dates;
+  dates.open("dates.txt");
+  trade back;
+  
+  for(int i = 1 ; i < Json_datapoints[0].size() ; i++)
+  { 
+    if(buy_flag == 0)
+    { 
+      flag_entry_cond = 0;  
+     for(j = 0 ; j < user_entry_cond.size() ; j++)
+     {
+       first_para = GetDouble(Json_datapoints[user_entry_cond[j].first_parameter-1][i]);
+       prev_first_para = GetDouble(Json_datapoints[user_entry_cond[j].first_parameter-1][i-1]);
+       second_para = GetDouble(Json_datapoints[user_entry_cond[j].second_parameter-1][i]);
+       prev_second_para = GetDouble(Json_datapoints[user_entry_cond[j].second_parameter-1][i-1]);
+     
+       if(!condition(user_entry_cond[j].condition , first_para , prev_first_para , second_para , prev_second_para))
+       {
+         flag_entry_cond = 1;
+         break;
+       } 
+     }
+   
+     if(flag_entry_cond == 0)
+     {
+       buy_flag = 1;
+       back.investment.push_back(GetDouble(Json_datapoints[1][i])*qty);
+       back.entry_date.push_back(Json_datapoints.back()[i].toString().c_str());
+       dates<<GetDouble(Json_datapoints[1][i])<<"\t"<<Json_datapoints.back()[i].toString().c_str()<<"\t";
+     } 
+    }
+    
+    else
+    {
+      flag_exit_cond = 0;
+      for(j = 0 ; j < user_exit_cond.size() ; j++)
+      {
+       first_para = GetDouble(Json_datapoints[user_exit_cond[j].first_parameter-1][i]);
+       prev_first_para = GetDouble(Json_datapoints[user_exit_cond[j].first_parameter-1][i-1]);
+       second_para = GetDouble(Json_datapoints[user_exit_cond[j].second_parameter-1][i]);
+       prev_second_para = GetDouble(Json_datapoints[user_exit_cond[j].second_parameter-1][i-1]);
+       if(!condition(user_exit_cond[j].condition , first_para , prev_first_para , second_para , prev_second_para))
+       {
+         flag_exit_cond = 1;
+         break;
+       }
+      }
+      if(flag_exit_cond == 0)
+      {
+        buy_flag = 0; 
+        back.sell.push_back(qty*GetDouble(Json_datapoints[1][i]));
+        profit = back.sell.back() - back.investment.back();
+        back.profit += profit;
+        back.transaction.push_back(profit);
+        back.exit_date.push_back(Json_datapoints.back()[i].toString().c_str());
+        if(profit>=0)
+          back.pos++;
+        else
+          back.neg++;
+        dates<<GetDouble(Json_datapoints[1][i])<<"\t"<<Json_datapoints.back()[i].toString().c_str()<<"\t"<<profit<<endl;
+      }
+      
+    } 
+  }
+ if(buy_flag == 1)
+ {
+    cout<<"\nStanding trade: "<<back.investment.back()<<endl;
+ } 
+  
+ dates.close();
+ back.summary(); 
+  return 0;
+    
+}
